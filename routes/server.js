@@ -49,4 +49,96 @@ router.get("/:server_id", function(req, res) {
     })
 })
 
+
+var multer = require("multer")
+
+var path = require('path')
+
+var storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, './public/images/frames/')
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    }
+})
+
+var upload = multer({ storage: storage })
+
+
+db = require("./../fb/fb").db
+bucket = require("./../fb/fb").bucket
+
+Alert = require("./../db/Alert")
+Suspect = require("./../db/Suspect")
+
+router.post("/:serverId/alert/", upload.single("frame"), async(req, res) => {
+    try {
+        cameraId = req.body.cameraId
+        suspectId = req.body.suspectId
+        serverId = req.params.serverId
+
+        //generate alert for firebase
+        camera = await Camera.findById(cameraId)
+        if (camera == null) {
+            res.json({
+                err: {
+                    message: "Camera does not exist in the database!"
+                }
+            })
+            return
+        }
+        pos = {
+            latitude: camera.latitude,
+            longitude: camera.longitude
+        }
+        frame = req.file.path
+        blob = bucket.upload(frame, {}, (ur) => {
+            console.log(ur)
+        })
+
+        frame_url = "https://storage.googleapis.com/fypqrf-b3259.appspot.com/" + req.file.filename
+        time = new Date()
+        alert = {
+            suspectId,
+            cameraId,
+            frame_url,
+            time
+        }
+
+        Alert.create(alert, (err, d) => {
+            if (err) {
+                console.error(err)
+                res.json({ err })
+            } else {
+                res.json({
+                    succ: {
+                        message: "Alert successfully generated!"
+                    }
+                })
+            }
+        })
+
+        suspect = await Suspect.findById(suspectId, {
+            _id: 0,
+            __v: 0,
+        })
+        suspect = JSON.parse(JSON.stringify(suspect))
+        fb_alert = {
+            location: pos,
+            frame_url,
+            suspect,
+            time,
+            suspectId
+        }
+        console.log(fb_alert)
+        ref = db.ref("Alerts")
+
+        ref.push().set(fb_alert)
+    } catch (err) {
+        console.error(err)
+        res.json({ err })
+    }
+})
+
 module.exports = router

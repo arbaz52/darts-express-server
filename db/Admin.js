@@ -16,7 +16,8 @@ var Admin = new Schema({
     },
     personId: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: "Person"
     }
 })
 

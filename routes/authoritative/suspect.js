@@ -3,12 +3,13 @@ var Suspect = require("./../../db/Suspect")
 var multer = require("multer")
 
 
+var path = require('path')
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, './public/images/')
     },
     filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now())
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
     }
 })
 
@@ -96,17 +97,26 @@ router.put("/:suspect_id", function(req, res) {
 })
 
 //add picture
+db = require("./../../fb/fb").db
+bucket = require("./../../fb/fb").bucket
 router.put("/:suspect_id/picture", upload.single("picture"), function(req, res) {
     let suspect_id = req.params.suspect_id
+    frame = req.file.path
+    blob = bucket.upload(frame, {}, (ur) => {
+        console.log(ur)
+    })
+
+    frame_url = "https://storage.googleapis.com/fypqrf-b3259.appspot.com/" + req.file.filename
+
     Suspect.findByIdAndUpdate(suspect_id, {
-            $push: { pictures: "http://localhost:3000/images/" + req.file.filename }
+            $push: { pictures: frame_url }
         },
         function(err, d) {
             if (err) {
                 res.json({
                     err: err
                 })
-            } else if (d) {
+            } else {
 
                 res.json({
                     succ: {

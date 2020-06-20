@@ -1,0 +1,18 @@
+html
+    head
+        title Set a password for this account
+    body
+        h1 Hey! Looks like you got the email.
+        form(method="POST" action="")
+            label(for='passCode') Passcode (4-digit verification code sent in email):
+            br
+            input#passCode(type='number', placeholder='4-digit code' name='passCode')
+            br
+
+            label(for='password') Password (Anything you can think of!):
+            br
+            input#passCode(type='password', placeholder='Password' name='password')
+            br
+
+            button(type="submit") Setup my account!
+        

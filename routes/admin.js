@@ -6,9 +6,9 @@ var Person = require("../db/Person")
 
 
 //login
-router.post("/login", function (req, res) {
+router.post("/login", function(req, res) {
     var user = req.body.user
-    Admin.findOne({ email: user.email }, function (err, data) {
+    Admin.findOne({ email: user.email }, function(err, data) {
         if (err) {
             res.json({
                 err: err
@@ -24,7 +24,7 @@ router.post("/login", function (req, res) {
             }
             if (data.password == user.password) {
                 req.session.admin = data
-                Person.findById(user.personId, function (err, data) {
+                Person.findById(user.personId, function(err, data) {
                     if (err) {
                         res.json({
                             err: err
@@ -51,7 +51,7 @@ router.post("/login", function (req, res) {
 })
 
 //logout
-router.post("/logout", function (req, res) {
+router.post("/logout", function(req, res) {
     req.session.destroy()
     res.json({
         succ: {
@@ -63,6 +63,7 @@ router.post("/logout", function (req, res) {
 
 var cameraRouter = require("./admin/camera")
 var serverRouter = require("./admin/server")
+var qrunitRotuer = require("./admin/qrunit")
 
 function isAuthorized(req, res, next) {
     if (req.session.admin) {
@@ -79,7 +80,7 @@ function isAuthorized(req, res, next) {
 
 }
 
-router.get("/isLoggedIn", isAuthorized, function (req, res) {
+router.get("/isLoggedIn", isAuthorized, function(req, res) {
     res.json({
         succ: {
             message: "Admin is logged in"
@@ -89,9 +90,10 @@ router.get("/isLoggedIn", isAuthorized, function (req, res) {
 
 //manage cameras
 router.use("/cameras", isAuthorized, cameraRouter)
-//manage servers
+    //manage servers
 router.use("/servers", isAuthorized, serverRouter)
 
+router.use("/qrunit", isAuthorized, qrunitRotuer)
 
 
 module.exports = router

@@ -9,6 +9,10 @@ var Person = new Schema({
     gender: {
         type: String,
         required: true
+    },
+    picture_url: {
+        type: String,
+        required: true
     }
 })
 var sch = mongoose.model("Person", Person)

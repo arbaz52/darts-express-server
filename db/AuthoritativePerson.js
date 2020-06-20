@@ -12,6 +12,11 @@ var AuthoritativePerson = new Schema({
     },
     personId: {
         type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Person"
+    },
+    privileges: {
+        type: [String],
         required: true
     }
 })

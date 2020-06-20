@@ -88,7 +88,10 @@ var suspectsRouter = require("./authoritative/suspect")
 router.use("/suspects", isAuthorized, suspectsRouter)
 
 
+var adminRouter = require("./authoritative/admin")
+router.use("/admin", isAuthorized, adminRouter)
 
-
+var authoritativeRouter = require("./authoritative/authoritative")
+router.use("/authoritative", isAuthorized, authoritativeRouter)
 
 module.exports = router
