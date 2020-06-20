@@ -13,21 +13,34 @@ var qrcode = require("qrcode")
 var md5 = require("md5")
 var QRAuth = require("../../db/QRAuth")
 
+var path = require('path')
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, './public/images/')
     },
     filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now())
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
     }
 })
 var upload = multer({ storage: storage })
 
 
 //add a person if it does not exist
+db = require("./../../fb/fb").db
+bucket = require("./../../fb/fb").bucket
+
 router.post("/person", upload.single("picture"), (req, res) => {
     var person = JSON.parse(req.body.person)
     person.picture_url = "http://localhost:3000/images/" + req.file.filename
+    person.picture_url = "http://localhost:3000/images/" + req.file.filename
+    frame = req.file.path
+    blob = bucket.upload(frame, {}, (ur) => {
+        console.log(ur)
+    })
+
+    frame_url = "https://storage.googleapis.com/fypqrf-b3259.appspot.com/" + req.file.filename
+    person.picture_url = frame_url
+
     Person.create(person, (err, data) => {
         if (err) {
             console.error(err)
