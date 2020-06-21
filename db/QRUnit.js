@@ -15,10 +15,9 @@ var QRUnit = new Schema({
         required: true
     },
     members: [{
-        personId: {
-            type: Schema.Types.ObjectId,
-            required: true
-        }
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Person"
     }]
 })
 
