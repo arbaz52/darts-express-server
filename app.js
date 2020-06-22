@@ -1,3 +1,12 @@
+var fs = require('fs');
+var dirs = ['./public/images', './public/images/frames'];
+console.log("Setting up folder structure")
+dirs.forEach(dir => {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
+})
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
