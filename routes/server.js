@@ -72,6 +72,10 @@ bucket = require("./../fb/fb").bucket
 Alert = require("./../db/Alert")
 Suspect = require("./../db/Suspect")
 
+function getR() {
+    return parseInt(Math.random() * 360)
+}
+var geolib = require("geolib")
 router.post("/:serverId/alert/", upload.single("frame"), async(req, res) => {
     try {
         cameraId = req.body.cameraId
@@ -88,10 +92,17 @@ router.post("/:serverId/alert/", upload.single("frame"), async(req, res) => {
             })
             return
         }
-        pos = {
-            latitude: camera.latitude,
-            longitude: camera.longitude
-        }
+        pos = geolib.computeDestinationPoint({ latitude: camera.latitude, longitude: camera.longitude },
+            20,
+            getR()
+        );
+        console.log(pos)
+            /*
+            pos = {
+                latitude: parseFloat(camera.latitude) + getR(),
+                longitude: parseFloat(camera.longitude) + getR()
+            }
+            */
         frame = req.file.path
         blob = bucket.upload(frame, {}, (ur) => {
             console.log(ur)
@@ -102,6 +113,8 @@ router.post("/:serverId/alert/", upload.single("frame"), async(req, res) => {
         alert = {
             suspectId,
             cameraId,
+            latitude: pos.latitude,
+            longitude: pos.longitude,
             frame_url,
             time
         }

@@ -94,4 +94,7 @@ router.use("/admin", isAuthorized, adminRouter)
 var authoritativeRouter = require("./authoritative/authoritative")
 router.use("/authoritative", isAuthorized, authoritativeRouter)
 
+var mapsRouter = require("./authoritative/map")
+router.use("/map", isAuthorized, mapsRouter)
+
 module.exports = router

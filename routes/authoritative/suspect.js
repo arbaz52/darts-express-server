@@ -2,6 +2,7 @@ var router = require("express").Router()
 var Suspect = require("./../../db/Suspect")
 var multer = require("multer")
 
+var Alert = require("./../../db/Alert")
 
 var path = require('path')
 var storage = multer.diskStorage({
@@ -83,6 +84,11 @@ router.get("/:suspect_id", function(req, res) {
             if (!data.pictures) {
                 suspect.pictures = []
             }
+
+            //loading track history
+            //basically all the alerts generated when this suspect was detected by our system
+            Alert
+
             res.json({
                 suspect: suspect
             })
@@ -99,12 +105,10 @@ router.put("/:suspect_id", function(req, res) {
 //add picture
 db = require("./../../fb/fb").db
 bucket = require("./../../fb/fb").bucket
-router.put("/:suspect_id/picture", upload.single("picture"), function(req, res) {
+router.put("/:suspect_id/picture", upload.single("picture"), async function(req, res) {
     let suspect_id = req.params.suspect_id
     frame = req.file.path
-    blob = bucket.upload(frame, {}, (ur) => {
-        console.log(ur)
-    })
+    await bucket.upload(frame, {})
 
     frame_url = "https://storage.googleapis.com/fypqrf-b3259.appspot.com/" + req.file.filename
 
@@ -121,8 +125,9 @@ router.put("/:suspect_id/picture", upload.single("picture"), function(req, res) 
                 res.json({
                     succ: {
                         message: "Picture added succesfully!",
-                        suspect: d
-                    }
+                    },
+                    suspect: d,
+                    frame_url: frame_url
                 })
             }
         }

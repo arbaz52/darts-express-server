@@ -12,6 +12,17 @@ var Alert = new Schema({
         required: true,
         ref: "Cameras"
     },
+
+    latitude: {
+        type: Number,
+        required: true,
+    },
+    longitude: {
+        type: Number,
+        required: true,
+    },
+
+
     frame_url: {
         type: String,
         required: true
