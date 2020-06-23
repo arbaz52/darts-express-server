@@ -93,6 +93,31 @@ router.get("/alerts/:suspectId", (req, res) => {
 })
 
 
+router.get("/alert/:alertId", (req, res) => {
+    var alertId = req.params.alertId
+    Alert.findById(alertId).populate({
+        path: "suspectId",
+        model: Suspect
+    }).populate({
+        path: "cameraId",
+        model: Camera
+    }).exec((err, data) => {
+        if (err) {
+            console.error(err)
+            res.json({ err })
+        } else {
+            res.json({
+                succ: {
+                    message: "Alert"
+                },
+                alert: data
+            })
+        }
+    })
+
+})
+
+
 
 router.get("/qrunits", (req, res) => {
     QRUnit.find({}).populate("members").exec((err, data) => {
@@ -131,6 +156,52 @@ router.get("/search/:query", (req, res) => {
                 err
             })
         });
+})
+
+
+
+router.get("/camera/:camera_id", function(req, res) {
+    var camera_id = req.params.camera_id
+    Camera.findById(camera_id, function(err, data) {
+        if (err) {
+            res.json({
+                err: err
+            })
+        } else if (!data) {
+            res.json({
+                err: {
+                    message: "Camera not found!"
+                }
+            })
+        } else {
+            if (data.serverId) {
+                Server.findById(data.serverId, function(e, d) {
+                    if (e) {
+                        res.json({
+                            err: e
+                        })
+                    } else if (d == null) {
+                        res.json({
+                            err: {
+                                message: "Server for this camera not found!"
+                            }
+                        })
+                    } else {
+                        data.server = d
+                        console.log("working", data, d)
+                        res.json({
+                            camera: data,
+                            server: d
+                        })
+                    }
+                })
+            } else {
+                res.json({
+                    camera: data
+                })
+            }
+        }
+    })
 })
 
 module.exports = router

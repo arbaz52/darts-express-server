@@ -95,7 +95,7 @@ router.get("/person", async(req, res) => {
         for (var i = 0; i < qrunits.length; i++) {
             for (var j = 0; j < qrunits[i].members.length; j++) {
                 for (var k = 0; k < free_people.length; k++) {
-                    if (free_people[k]._id.equals(qrunits[i].members[j].personId)) {
+                    if (free_people[k]._id.equals(qrunits[i].members[j])) {
                         free_people.splice(k, 1)
                     }
                 }
