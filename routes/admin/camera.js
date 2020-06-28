@@ -2,6 +2,7 @@ var router = require("express").Router()
 
 var Camera = require("../../db/Camera")
 var Server = require("../../db/Server")
+var geolib = require("geolib")
 
 //CRUD Operations
 
@@ -21,30 +22,76 @@ router.get("/", function(req, res) {
 })
 
 
-var nodeGeocoder = require("node-geocoder")
-const options = {
-    provider: 'openstreetmap'
-};
-const geocoder = nodeGeocoder(options)
-    //searching address to geo location
+const opencage = require('opencage-api-client');
+//searching address to geo location
 router.get("/search/:query", async(req, res) => {
     var query = req.params.query
-    const d = await geocoder.geocode(query);
-    if (d.length > 0) {
-        console.log(d)
-        res.json({
-            succ: {
-                message: "Location found"
-            },
-            location: d
-        })
-    } else {
-        res.json({
-            err: {
-                message: "No location found!"
+    opencage.geocode({ q: query })
+        .then(async(r) => {
+            console.log(r);
+            //check 
+            if (r.results.length > 0) {
+                var location = r.results[0]
+                    //get the cameras
+                var cameras = await Camera.find({})
+                var sortedCameras = []
+                cameras.forEach((camera) => {
+
+                        var dist = geolib.getDistance({
+                            latitude: camera.latitude,
+                            longitude: camera.longitude
+                        }, {
+                            latitude: location.geometry.lat,
+                            longitude: location.geometry.lng
+                        })
+                        sortedCameras.push([camera, dist])
+                    })
+                    //sort based on distance
+                for (var ii = 0; ii < sortedCameras.length; ii++) {
+                    for (var j = ii + 1; j < sortedCameras.length; j++) {
+                        if (sortedCameras[ii][1] > sortedCameras[j][1]) {
+                            temp = sortedCameras[ii];
+                            sortedCameras[ii] = sortedCameras[j]
+                            sortedCameras[j] = temp
+                        }
+                    }
+                }
+                cameras = []
+                sortedCameras.forEach(cwd => {
+                    cameras.push(cwd[0])
+                })
+
+
+                res.json({
+                    succ: {
+                        message: "Location found"
+                    },
+                    location: r.results[0],
+                    sortedCameras,
+                    cameras
+                })
+
+            } else {
+                res.json({
+                    err: {
+                        message: "No location found!"
+                    }
+                })
             }
+            res.json({
+                succ: {
+                    message: "Locations"
+                },
+                locations: r
+            })
         })
-    }
+        .catch((err) => {
+            console.log(err);
+            res.json({
+                err
+            })
+        });
+    return
 })
 
 
@@ -169,7 +216,6 @@ router.delete("/:camera_id", function(req, res) {
 
 
 
-var geolib = require("geolib")
 
 //algo
 /*
