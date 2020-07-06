@@ -119,11 +119,29 @@ router.post("/:serverId/alert/", upload.single("frame"), async(req, res) => {
             time
         }
 
-        Alert.create(alert, (err, d) => {
+        Alert.create(alert, async(err, d) => {
             if (err) {
                 console.error(err)
                 res.json({ err })
             } else {
+
+                suspect = await Suspect.findById(suspectId, {
+                    _id: 0,
+                    __v: 0,
+                })
+                suspect = JSON.parse(JSON.stringify(suspect))
+                fb_alert = {
+                    location: pos,
+                    frame_url,
+                    suspect,
+                    time,
+                    suspectId,
+                    alertId: d._id + ""
+                }
+                console.log(fb_alert)
+                ref = db.ref("Alerts")
+
+                ref.push().set(fb_alert)
                 res.json({
                     succ: {
                         message: "Alert successfully generated!"
@@ -132,22 +150,6 @@ router.post("/:serverId/alert/", upload.single("frame"), async(req, res) => {
             }
         })
 
-        suspect = await Suspect.findById(suspectId, {
-            _id: 0,
-            __v: 0,
-        })
-        suspect = JSON.parse(JSON.stringify(suspect))
-        fb_alert = {
-            location: pos,
-            frame_url,
-            suspect,
-            time,
-            suspectId
-        }
-        console.log(fb_alert)
-        ref = db.ref("Alerts")
-
-        ref.push().set(fb_alert)
     } catch (err) {
         console.error(err)
         res.json({ err })
