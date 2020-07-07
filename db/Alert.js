@@ -30,6 +30,27 @@ var Alert = new Schema({
     time: {
         type: Date,
         required: true
+    },
+
+    //for qrunits
+    qrunit: {
+        type: Schema.Types.ObjectId,
+        ref: "QRUnits",
+        required: false
+    },
+    started_handling: {
+        type: Date,
+        required: false
+    },
+
+    //when closed
+    closed_alert: {
+        type: Date,
+        required: false
+    },
+    reason: {
+        type: String,
+        required: false
     }
 })
 

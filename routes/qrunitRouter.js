@@ -5,6 +5,7 @@ var QRUnit = require("./../db/QRUnit")
 var Suspect = require("./../db/Suspect")
 var Alert = require("./../db/Alert")
 var Camera = require("./../db/Camera")
+var Person = require("./../db/Person")
 
 router.get("/authenticate/:authkey", (req, res) => {
         var key = req.params.authkey
@@ -45,7 +46,7 @@ router.get("/:qrunitId", async(req, res) => {
 
         suspects = await Suspect.find({})
 
-        alerts = await Alert.find({}).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera })
+        alerts = await Alert.find({}).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera }).populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
 
         res.json({
             succ: {
@@ -64,7 +65,7 @@ router.get("/:qrunitId", async(req, res) => {
 
 router.get("/:qrunitId/alerts/", async(req, res) => {
     try {
-        var alerts = await Alert.find({}).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera })
+        var alerts = await Alert.find({}).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera }).populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
         res.json({
             succ: {
                 message: "Alerts"
@@ -78,7 +79,7 @@ router.get("/:qrunitId/alerts/", async(req, res) => {
 router.get("/:qrunitId/alerts/:alertId", async(req, res) => {
     try {
         var alertId = req.params.alertId
-        var alert = await Alert.findById(alertId).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera })
+        var alert = await Alert.findById(alertId).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera }).populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
         res.json({
             succ: {
                 message: "Alert"
@@ -121,5 +122,107 @@ router.get("/:qrunitId/suspects/:suspectId", async(req, res) => {
         res.json({ err })
     }
 })
+
+
+
+
+//handling alert
+router.put("/:qrunitId/alerts/:alertId/handle", async(req, res) => {
+        try {
+            var qrunitId = req.params.qrunitId
+            var alertId = req.params.alertId
+            var alert = await Alert.findById(alertId).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera }).populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
+            if (alert.qrunit) {
+                res.json({
+                    err: {
+                        message: "Alert is already being handled or closed!"
+                    },
+                    alert
+                })
+            } else {
+                Alert.findByIdAndUpdate(alertId, {
+                    qrunit: qrunitId,
+                    started_handling: new Date()
+                }, async(err, d) => {
+                    if (err) {
+                        res.json({ err })
+                    } else {
+                        var alert = await Alert.findById(alertId).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera }).populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
+                        res.json({
+                            succ: {
+                                message: "You've now been assigned this alert!"
+                            },
+                            alert
+                        })
+                    }
+                })
+            }
+
+        } catch (err) {
+            res.json({ err })
+        }
+    })
+    //closing alert
+router.put("/:qrunitId/alerts/:alertId/close/:reason", async(req, res) => {
+    try {
+        var qrunitId = req.params.qrunitId
+        var alertId = req.params.alertId
+        var reason = req.params.reason
+        var alert = await Alert.findById(alertId).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera }).populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
+        if (alert.qrunit) {
+            //check if you're handling the alert
+            if (alert.qrunit._id.equals(qrunitId)) {
+                //check if it's already been closed
+                if (alert.closed_alert) {
+                    res.json({
+                        err: {
+                            message: "Alert has been closed"
+                        },
+                        alert
+                    })
+                } else {
+
+                    //close the alert
+                    Alert.findByIdAndUpdate(alertId, {
+                        qrunit: qrunitId,
+                        closed_alert: new Date(),
+                        reason
+                    }, async(err, d) => {
+                        if (err) {
+                            res.json({ err })
+                        } else {
+                            var alert = await Alert.findById(alertId).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera }).populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
+                            res.json({
+                                succ: {
+                                    message: "You've closed this alert, reason: '" + reason + "'"
+                                },
+                                alert
+                            })
+                        }
+                    })
+                }
+            } else {
+                res.json({
+                    err: {
+                        message: "You're not the one handling the alert!"
+                    },
+                    alert
+                })
+            }
+        } else {
+            res.json({
+                err: {
+                    message: "Please handle the alert first!"
+                },
+                alert
+            })
+        }
+
+    } catch (err) {
+        res.json({ err })
+    }
+})
+
+
 
 module.exports = router
