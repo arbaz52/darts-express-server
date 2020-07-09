@@ -134,7 +134,7 @@ router.post("/:serverId/alert/", upload.single("frame"), async(req, res) => {
                     location: pos,
                     frame_url,
                     suspect,
-                    time,
+                    time: time + "",
                     suspectId,
                     alertId: d._id + ""
                 }

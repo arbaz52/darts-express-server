@@ -63,6 +63,36 @@ router.get("/:qrunitId", async(req, res) => {
 
 })
 
+router.get("/:qrunitId/qrunits/", async(req, res) => {
+    try {
+        qrunits = await QRUnit.find({}).populate("members")
+        res.json({
+            succ: {
+                message: "All the QRUnits"
+            },
+            qrunits
+        })
+    } catch (err) {
+        res.json({ err })
+    }
+})
+
+router.get("/:qrunitId/qrunits/:id", async(req, res) => {
+    try {
+        var id = req.params.id;
+        qrunit = await QRUnit.findById(id).populate("members")
+        res.json({
+            succ: {
+                message: "QRUnit"
+            },
+            qrunit
+        })
+    } catch (err) {
+        res.json({ err })
+    }
+})
+
+
 router.get("/:qrunitId/alerts/", async(req, res) => {
     try {
         var alerts = await Alert.find({}).populate({ path: "suspectId", model: Suspect }).populate({ path: "cameraId", model: Camera }).populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
