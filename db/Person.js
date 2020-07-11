@@ -7,9 +7,10 @@ let validateLength = (v) => {
 
 var Person = new Schema({
     fullName: {
-        type: String,
+        type: Schema.Types.String,
         required: true,
         unique: true,
+        trim: true,
         validate: [
             validateLength, "Invalid fullname, should be more than 2 characters long"
         ]
