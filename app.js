@@ -25,6 +25,7 @@ var authoritativeRouter = require("./routes/authoritative")
 
 var qrunitRouter = require("./routes/qrunitRouter")
 
+var mapRouter = require("./routes/map")
 
 var app = express();
 
@@ -63,7 +64,7 @@ app.use("/authoritative", authoritativeRouter)
 
 app.use("/qrunit", qrunitRouter)
 
-
+app.use("/map", mapRouter)
 
 var Person = require("./db/Person")
 app.get("/start", async(req, res) => {
