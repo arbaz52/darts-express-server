@@ -47,24 +47,26 @@ router.get("/servers", (req, res) => {
 })
 router.get("/alerts", (req, res) => {
     Alert.find({}).populate({
-        path: "suspectId",
-        model: Suspect
-    }).populate({
-        path: "cameraId",
-        model: Camera
-    }).exec((err, data) => {
-        if (err) {
-            console.error(err)
-            res.json({ err })
-        } else {
-            res.json({
-                succ: {
-                    message: "Alerts"
-                },
-                alerts: data
-            })
-        }
-    })
+            path: "suspectId",
+            model: Suspect
+        }).populate({
+            path: "cameraId",
+            model: Camera
+        })
+        .populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
+        .exec((err, data) => {
+            if (err) {
+                console.error(err)
+                res.json({ err })
+            } else {
+                res.json({
+                    succ: {
+                        message: "Alerts"
+                    },
+                    alerts: data
+                })
+            }
+        })
 
 })
 
