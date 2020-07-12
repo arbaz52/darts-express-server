@@ -71,24 +71,26 @@ router.get("/alerts", (req, res) => {
 router.get("/alerts/:suspectId", (req, res) => {
     var suspectId = req.params.suspectId
     Alert.find({ suspectId: suspectId }).populate({
-        path: "suspectId",
-        model: Suspect
-    }).populate({
-        path: "cameraId",
-        model: Camera
-    }).exec((err, data) => {
-        if (err) {
-            console.error(err)
-            res.json({ err })
-        } else {
-            res.json({
-                succ: {
-                    message: "Alerts for suspect"
-                },
-                alerts: data
-            })
-        }
-    })
+            path: "suspectId",
+            model: Suspect
+        }).populate({
+            path: "cameraId",
+            model: Camera
+        })
+        .populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
+        .exec((err, data) => {
+            if (err) {
+                console.error(err)
+                res.json({ err })
+            } else {
+                res.json({
+                    succ: {
+                        message: "Alerts for suspect"
+                    },
+                    alerts: data
+                })
+            }
+        })
 
 })
 
@@ -96,24 +98,26 @@ router.get("/alerts/:suspectId", (req, res) => {
 router.get("/alert/:alertId", (req, res) => {
     var alertId = req.params.alertId
     Alert.findById(alertId).populate({
-        path: "suspectId",
-        model: Suspect
-    }).populate({
-        path: "cameraId",
-        model: Camera
-    }).exec((err, data) => {
-        if (err) {
-            console.error(err)
-            res.json({ err })
-        } else {
-            res.json({
-                succ: {
-                    message: "Alert"
-                },
-                alert: data
-            })
-        }
-    })
+            path: "suspectId",
+            model: Suspect
+        }).populate({
+            path: "cameraId",
+            model: Camera
+        })
+        .populate({ path: "qrunit", model: QRUnit, populate: { path: "members", model: Person } })
+        .exec((err, data) => {
+            if (err) {
+                console.error(err)
+                res.json({ err })
+            } else {
+                res.json({
+                    succ: {
+                        message: "Alert"
+                    },
+                    alert: data
+                })
+            }
+        })
 
 })
 
