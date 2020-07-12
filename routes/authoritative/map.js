@@ -6,6 +6,7 @@ var Server = require("./../../db/Server")
 var QRUnit = require("./../../db/QRUnit")
 var Alert = require("./../../db/Alert")
 var Suspect = require("./../../db/Suspect")
+var Person = require("./../../db/Person")
 
 router.get("/", (req, res) => {
     res.json({
