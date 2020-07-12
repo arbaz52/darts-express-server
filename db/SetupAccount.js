@@ -16,5 +16,11 @@ var SetupAccount = new Schema({
     }
 })
 
+SetupAccount.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
+
 var sch = mongoose.model("SetupAccount", SetupAccount)
 module.exports = sch

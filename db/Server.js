@@ -21,5 +21,12 @@ var Server = new Schema({
     }
 })
 
+
+Server.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
+
 var sch = mongoose.model("Server", Server)
 module.exports = sch

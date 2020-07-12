@@ -2,7 +2,7 @@ var mongoose = require('./connection')
 var Schema = mongoose.Schema
 
 let validateLength = (v) => {
-    return v.length > 2;
+    return v.length > 2 && valid;
 }
 
 var Person = new Schema({
@@ -24,5 +24,11 @@ var Person = new Schema({
         required: true
     }
 })
+
+Person.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
 var sch = mongoose.model("Person", Person)
 module.exports = sch

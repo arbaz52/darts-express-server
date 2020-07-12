@@ -19,5 +19,12 @@ var Suspect = new Schema({
         type: [String]
     }
 })
+
+Suspect.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
+
 var sch = mongoose.model("Suspect", Suspect)
 module.exports = sch

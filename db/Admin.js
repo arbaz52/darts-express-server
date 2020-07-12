@@ -30,5 +30,11 @@ var Admin = new Schema({
     }
 })
 
+Admin.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
+
 var sch = mongoose.model("Admin", Admin)
 module.exports = sch

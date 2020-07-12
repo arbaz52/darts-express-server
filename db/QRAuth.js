@@ -12,5 +12,10 @@ var QRAuth = new Schema({
     }
 })
 
+QRAuth.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
 var sch = mongoose.model("QRAuth", QRAuth)
 module.exports = sch

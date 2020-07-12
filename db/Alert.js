@@ -54,5 +54,10 @@ var Alert = new Schema({
     }
 })
 
+Alert.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
 var sch = mongoose.model("Alert", Alert)
 module.exports = sch

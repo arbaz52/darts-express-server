@@ -30,30 +30,35 @@ db = require("./../../fb/fb").db
 bucket = require("./../../fb/fb").bucket
 
 router.post("/person", upload.single("picture"), (req, res) => {
-    var person = JSON.parse(req.body.person)
-    person.picture_url = "http://localhost:3000/images/" + req.file.filename
-    person.picture_url = "http://localhost:3000/images/" + req.file.filename
-    frame = req.file.path
-    blob = bucket.upload(frame, {}, (ur) => {
-        console.log(ur)
-    })
+    try {
 
-    frame_url = "https://storage.googleapis.com/fypqrf-b3259.appspot.com/" + req.file.filename
-    person.picture_url = frame_url
+        var person = JSON.parse(req.body.person)
+        person.picture_url = "http://localhost:3000/images/" + req.file.filename
+        person.picture_url = "http://localhost:3000/images/" + req.file.filename
+        frame = req.file.path
+        blob = bucket.upload(frame, {}, (ur) => {
+            console.log(ur)
+        })
 
-    Person.create(person, (err, data) => {
-        if (err) {
-            console.error(err)
-            res.json({ err })
-        } else {
-            res.json({
-                succ: {
-                    message: "Person added successfully!"
-                },
-                person: data
-            })
-        }
-    })
+        frame_url = "https://storage.googleapis.com/fypqrf-b3259.appspot.com/" + req.file.filename
+        person.picture_url = frame_url
+
+        Person.create(person, (err, data) => {
+            if (err) {
+                console.error(err)
+                res.json({ err })
+            } else {
+                res.json({
+                    succ: {
+                        message: "Person added successfully!"
+                    },
+                    person: data
+                })
+            }
+        })
+    } catch (err) {
+        res.json({ err })
+    }
 })
 
 //get list of all the available people

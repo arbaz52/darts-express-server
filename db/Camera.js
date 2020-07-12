@@ -4,7 +4,8 @@ var Schema = mongoose.Schema
 var Camera = new Schema({
     longitude: {
         type: Number,
-        required: true
+        required: true,
+
     },
     latitude: {
         type: Number,
@@ -19,6 +20,12 @@ var Camera = new Schema({
         required: false
     }
 })
+
+Camera.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
 
 var sch = mongoose.model("Camera", Camera)
 module.exports = sch

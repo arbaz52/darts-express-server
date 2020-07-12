@@ -30,5 +30,10 @@ var AuthoritativePerson = new Schema({
     }
 })
 
+AuthoritativePerson.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
 var sch = mongoose.model("AuthoritativePerson", AuthoritativePerson)
 module.exports = sch

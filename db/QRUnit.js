@@ -21,5 +21,13 @@ var QRUnit = new Schema({
     }]
 })
 
+
+QRUnit.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
+
+
+
 var sch = mongoose.model("QRUnit", QRUnit)
 module.exports = sch
