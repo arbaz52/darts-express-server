@@ -2,6 +2,7 @@ var router = require("express").Router()
 
 var Camera = require("../../db/Camera")
 var Server = require("../../db/Server")
+var Preprocessing = require("../../db/Preprocessing")
 var geolib = require("geolib")
 
 //CRUD Operations
@@ -309,6 +310,71 @@ router.post("/autoassign", async(req, res) => {
         },
         serversWithDistance
     })
+})
+
+router.get("/:cameraId/preprocessing", async(req, res) => {
+    try {
+        cameraId = req.params.cameraId
+        pp = await Preprocessing.find({
+            cameraId
+        })
+        if (pp.length > 0) {
+            var ppfc = pp[0]
+            res.json({
+                succ: {
+                    message: "Updated preprocessing values"
+                },
+                pre: ppfc
+            })
+        } else {
+            res.json({
+                err: {
+                    message: "Preprocessing values not set for the camera!"
+                }
+            })
+        }
+    } catch (err) {
+        console.log(err)
+        res.json({ err })
+    }
+})
+router.put("/:cameraId/preprocessing", async(req, res) => {
+    try {
+        cameraId = req.params.cameraId
+        pre = req.body.pre
+        pre.cameraId = cameraId
+        pp = await Preprocessing.find({
+            cameraId
+        })
+        if (pp.length > 0) {
+            var ppfc = pp[0]
+                //exists, just update
+            await Preprocessing.update({ cameraId }, pre)
+            res.json({
+                succ: {
+                    message: "Updated preprocessing values"
+                },
+                pre
+            })
+        } else {
+            pre = await Preprocessing.create(pre, (err, data) => {
+                if (err) {
+                    res.json({
+                        err
+                    })
+                } else {
+                    res.json({
+                        succ: {
+                            message: "Created preprocessing values"
+                        },
+                        pre
+                    })
+                }
+            })
+        }
+    } catch (err) {
+        res.json({ err })
+    }
 })
 
 

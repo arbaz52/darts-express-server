@@ -2,6 +2,7 @@ var router = require("express").Router()
 var Server = require("../db/Server")
 var Camera = require("../db/Camera")
 var Suspect = require("../db/Suspect")
+var Preproccessing = require("../db/Preprocessing")
 
 //sends the cameras assigned to this server
 router.get("/:server_id", function(req, res) {
@@ -26,8 +27,19 @@ router.get("/:server_id", function(req, res) {
                 let cameras = await Camera.find({
                     serverId
                 })
+                camerasIds = []
+                cameras.forEach(camera => {
+                    camerasIds.push(camera._id)
+                })
+                preproccessing = await Preproccessing.find({
+                    cameraId: {
+                        $in: camerasIds
+                    }
+                })
+
                 server = JSON.parse(JSON.stringify(data))
                 server.cameras = cameras
+                server.preproccessing = preproccessing
 
                 let suspects = await Suspect.find({})
                 server.suspects = suspects
