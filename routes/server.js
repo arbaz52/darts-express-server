@@ -38,7 +38,7 @@ router.get("/:server_id", function(req, res) {
                 })
                 preproccessings = {}
                 pps.forEach(pp => {
-                    preproccessings[pp._id] = pp
+                    preproccessings[pp.cameraId] = pp
                 })
                 server = JSON.parse(JSON.stringify(data))
                 server.cameras = cameras
