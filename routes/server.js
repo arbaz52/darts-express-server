@@ -36,13 +36,13 @@ router.get("/:server_id", function(req, res) {
                         $in: camerasIds
                     }
                 })
-                preproccessings = {}
+                preprocessings = {}
                 pps.forEach(pp => {
-                    preproccessings[pp.cameraId] = pp
+                    preprocessings[pp.cameraId] = pp
                 })
                 server = JSON.parse(JSON.stringify(data))
                 server.cameras = cameras
-                server.preproccessings = preproccessings
+                server.preprocessings = preprocessings
 
                 let suspects = await Suspect.find({})
                 server.suspects = suspects

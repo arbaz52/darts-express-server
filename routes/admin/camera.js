@@ -24,7 +24,8 @@ router.get("/", function(req, res) {
 
 
 const opencage = require('opencage-api-client');
-//searching address to geo location
+const { AskServersToUpdatePreprocessingValues } = require("../../talker/talker")
+    //searching address to geo location
 router.get("/search/:query", async(req, res) => {
     var query = req.params.query
     opencage.geocode({ q: query })
@@ -350,6 +351,7 @@ router.put("/:cameraId/preprocessing", async(req, res) => {
             var ppfc = pp[0]
                 //exists, just update
             await Preprocessing.update({ cameraId }, pre)
+            AskServersToUpdatePreprocessingValues()
             res.json({
                 succ: {
                     message: "Updated preprocessing values"
@@ -363,12 +365,14 @@ router.put("/:cameraId/preprocessing", async(req, res) => {
                         err
                     })
                 } else {
+                    AskServersToUpdatePreprocessingValues()
                     res.json({
                         succ: {
                             message: "Created preprocessing values"
                         },
                         pre
                     })
+
                 }
             })
         }
