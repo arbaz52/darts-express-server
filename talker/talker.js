@@ -14,4 +14,4 @@ let AskServersToUpdatePreprocessingValues = async() => {
     })
 }
 
-module.exports.AskServersToUpdatePreprocessingValues = this.AskServersToUpdatePreprocessingValues
+module.exports.AskServersToUpdatePreprocessingValues = AskServersToUpdatePreprocessingValues

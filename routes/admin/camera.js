@@ -24,7 +24,7 @@ router.get("/", function(req, res) {
 
 
 const opencage = require('opencage-api-client');
-const { AskServersToUpdatePreprocessingValues } = require("../../talker/talker")
+var AskServersToUpdatePreprocessingValues = require("../../talker/talker").AskServersToUpdatePreprocessingValues
     //searching address to geo location
 router.get("/search/:query", async(req, res) => {
     var query = req.params.query
