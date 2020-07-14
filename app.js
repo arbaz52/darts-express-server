@@ -52,7 +52,7 @@ app.use(session({
 
 //use routers here
 app.use(cors({
-    credentials: true,
+    credentials: false,
     origin: "*",
     preflightContinue: true
 }))
