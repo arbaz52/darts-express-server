@@ -61,14 +61,17 @@ app.use(cors({
         console.log(origin, allowedOrigins)
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) === -1) {
+            console.log(msg)
             var msg = 'The CORS policy for this site does not ' +
                 'allow access from the specified Origin.';
+            console.log(msg)
             return callback(new Error(msg), false);
         }
-
+        console.log("allowing")
         return callback(null, true);
     },
-    credentials: true
+    credentials: true,
+    preflightContinue: true
 }));
 app.use("/server", serverRouter)
 
