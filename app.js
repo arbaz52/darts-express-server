@@ -51,7 +51,11 @@ app.use(session({
 
 
 //use routers here
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin: "http://localhost:4200",
+    preflightContinue: true
+}))
 app.use("/server", serverRouter)
 
 app.use("/admin", adminRouter)
