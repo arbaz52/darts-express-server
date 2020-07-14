@@ -53,7 +53,7 @@ app.use(session({
 //use routers here
 app.use(cors({
     credentials: true,
-    origin: "http://localhost:4200",
+    origin: "*",
     preflightContinue: true
 }))
 app.use("/server", serverRouter)
