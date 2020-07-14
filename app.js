@@ -51,11 +51,22 @@ app.use(session({
 
 
 //use routers here
+var allowedOrigins = ['http://localhost:4200',
+    'https://arbaz52.github.io/darts-angular-app/'
+];
 app.use(cors({
-    credentials: false,
-    origin: "*",
-    preflightContinue: true
-}))
+    origin: function(origin, callback) {
+        // allow requests with no origin 
+        // (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            var msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    }
+}));
 app.use("/server", serverRouter)
 
 app.use("/admin", adminRouter)
