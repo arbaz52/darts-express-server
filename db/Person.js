@@ -2,7 +2,7 @@ var mongoose = require('./connection')
 var Schema = mongoose.Schema
 
 let validateLength = (v) => {
-    return v.length > 2 && valid;
+    return v.length > 2;
 }
 
 var Person = new Schema({
