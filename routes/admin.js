@@ -3,6 +3,22 @@ var router = require("express").Router()
 var Admin = require("../db/Admin")
 var Person = require("../db/Person")
 
+router.get("/", isAuthorized, (req, res) => {
+    if (req._admin) {
+        res.json({
+            succ: {
+                message: "Currently logged in admin"
+            },
+            admin: req._admin
+        })
+    } else {
+        res.json({
+            err: {
+                message: "Admin information not available"
+            }
+        })
+    }
+})
 
 
 //login
@@ -65,10 +81,16 @@ var cameraRouter = require("./admin/camera")
 var serverRouter = require("./admin/server")
 var qrunitRotuer = require("./admin/qrunit")
 
-function isAuthorized(req, res, next) {
+async function isAuthorized(req, res, next) {
     if (req.session.admin) {
         console.log("is an admin")
-        next()
+        try {
+            admin = await Admin.findById(req.session.admin._id, { password: 0 }).populate({ path: "personId", model: Person })
+            req._admin = admin
+            next()
+        } catch (err) {
+            res.json({ err, ce: "Catched error" })
+        }
     } else {
         console.log("not an admin")
         res.json({
@@ -88,12 +110,64 @@ router.get("/isLoggedIn", isAuthorized, function(req, res) {
     })
 })
 
-//manage cameras
-router.use("/cameras", isAuthorized, cameraRouter)
-    //manage servers
-router.use("/servers", isAuthorized, serverRouter)
+function canManageCameras(req, res, next) {
+    var can = false
+    var admin = req._admin
+    admin.privileges.forEach(priv => {
+        can = priv == 'manage cameras' || priv == 'all' || can
+    })
+    if (can) {
+        next()
+    } else {
+        res.json({
+            err: {
+                message: "You are not permitted to access this functionality"
+            }
+        })
+    }
+}
 
-router.use("/qrunit", isAuthorized, qrunitRotuer)
+function canManageServers(req, res, next) {
+    var can = false
+    var admin = req._admin
+    admin.privileges.forEach(priv => {
+        can = priv == 'manage servers' || priv == 'all' || can
+    })
+    if (can) {
+        next()
+    } else {
+        res.json({
+            err: {
+                message: "You are not permitted to access this functionality"
+            }
+        })
+    }
+}
+
+function canManageQRUnits(req, res, next) {
+
+    var can = false
+    var admin = req._admin
+    admin.privileges.forEach(priv => {
+        can = priv == 'manage qrunits' || priv == 'all' || can
+    })
+    if (can) {
+        next()
+    } else {
+        res.json({
+            err: {
+                message: "You are not permitted to access this functionality"
+            }
+        })
+    }
+}
+
+//manage cameras
+router.use("/cameras", isAuthorized, canManageCameras, cameraRouter)
+    //manage servers
+router.use("/servers", isAuthorized, canManageServers, serverRouter)
+
+router.use("/qrunit", isAuthorized, canManageQRUnits, qrunitRotuer)
 
 
 module.exports = router
