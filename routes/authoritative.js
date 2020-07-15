@@ -136,7 +136,7 @@ function canAddAdmins(req, res, next) {
 
 function canAddAuthoritative(req, res, next) {
     var ap = req._authoritative
-    if (checkPermission(ap.privileges, 'add authoritative')) {
+    if (checkPermission(ap.privileges, 'add authoritative people')) {
         next()
     } else {
         res.json({
