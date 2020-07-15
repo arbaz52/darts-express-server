@@ -151,8 +151,19 @@ router.post("/", (req, res) => {
 
 
 //get all the qrunits
-router.get("/", (req, res) => {
-
+router.get("/", async(req, res) => {
+    try {
+        var id = req.params.id;
+        qrunits = await QRUnit.find({}).populate("members")
+        res.json({
+            succ: {
+                message: "QRUnit"
+            },
+            qrunits
+        })
+    } catch (err) {
+        res.json({ err })
+    }
 })
 
 
