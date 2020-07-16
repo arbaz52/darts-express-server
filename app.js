@@ -52,7 +52,8 @@ app.use(session({
 
 //use routers here
 var allowedOrigins = ['http://localhost:4200',
-    'https://arbaz52.github.io'
+    'https://arbaz52.github.io',
+    "http://darts-fyp.herokuapp.com"
 ];
 app.use(cors({
     origin: function(origin, callback) {
