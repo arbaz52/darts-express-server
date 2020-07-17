@@ -1,6 +1,6 @@
 var mongoose = require('./connection')
 var Schema = mongoose.Schema
-
+var uniqueValidator = require("mongoose-unique-validator")
 let validateLength = (v) => {
     return v.length > 2;
 }
@@ -25,10 +25,13 @@ var Person = new Schema({
     }
 })
 
+
 Person.pre('findOneAndUpdate', function(next) {
     this.options.runValidators = true;
     next();
 });
+
+Person.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique; {VALUE} already exists!' })
 
 var sch = mongoose.model("Person", Person)
 module.exports = sch
