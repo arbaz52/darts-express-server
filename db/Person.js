@@ -9,7 +9,7 @@ var Person = new Schema({
     fullName: {
         type: Schema.Types.String,
         required: true,
-        unique: true,
+        // unique: true,
         trim: true,
         validate: [
             validateLength, "Invalid fullname, should be more than 2 characters long"
@@ -31,7 +31,7 @@ Person.pre('findOneAndUpdate', function(next) {
     next();
 });
 
-Person.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique; {VALUE} already exists!' })
+// Person.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique; {VALUE} already exists!' })
 
 var sch = mongoose.model("Person", Person)
 module.exports = sch
