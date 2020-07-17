@@ -90,7 +90,7 @@ app.get("/start", async(req, res) => {
     person = {
         fullName: "Arbaz Ajaz",
         gender: "male",
-        picture_url: "x"
+        picture_url: "https://storage.googleapis.com/fypqrf-b3259.appspot.com/picture-1594981670538.png"
     }
     p = await Person.create(person)
     ap = {
