@@ -203,7 +203,7 @@ router.post("/", async(req, res) => {
             email.html = "<html>" +
                 "Visit the following link to set a password for your account " +
                 "<br/>Use this code to verify yourself: " + pc +
-                "<br/>http://localhost:3000/setup/" + setupAccount._id +
+                "<br/>https://darts-web-server.herokuapp.com/setup/" + setupAccount._id +
                 "</html>"
             mail.transport.sendMail(email)
             res.json({

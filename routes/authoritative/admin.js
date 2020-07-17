@@ -91,7 +91,7 @@ router.get("/person", async(req, res) => {
             var person = people[i];
             free_people.push(person)
         }
-
+        /*
         //check if they're in another unit
         for (var i = 0; i < qrunits.length; i++) {
             for (var j = 0; j < qrunits[i].members.length; j++) {
@@ -103,6 +103,8 @@ router.get("/person", async(req, res) => {
                 }
             }
         }
+        */
+
         //check if they're admin
         admins = await Admin.find({})
         console.log(admins)
@@ -204,7 +206,7 @@ router.post("/", async(req, res) => {
             email.html = "<html>" +
                 "Visit the following link to set a password for your account " +
                 "<br/>Use this code to verify yourself: " + pc +
-                "<br/>http://localhost:3000/setup/" + setupAccount._id +
+                "<br/>https://darts-web-server.herokuapp.com/setup/" + setupAccount._id +
                 "</html>"
             mail.transport.sendMail(email)
             res.json({
