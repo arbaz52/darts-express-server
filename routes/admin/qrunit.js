@@ -85,6 +85,8 @@ router.get("/person", async(req, res) => {
             }
         }
     }
+
+    /*
     //check if they're admin
     admins = await Admin.find({})
     console.log(admins)
@@ -106,7 +108,7 @@ router.get("/person", async(req, res) => {
             }
         }
     }
-
+    */
 
 
 

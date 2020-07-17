@@ -90,7 +90,7 @@ router.get("/person", async(req, res) => {
             var person = people[i];
             free_people.push(person)
         }
-
+        /*
         //check if they're in another unit
         for (var i = 0; i < qrunits.length; i++) {
             for (var j = 0; j < qrunits[i].members.length; j++) {
@@ -101,6 +101,7 @@ router.get("/person", async(req, res) => {
                 }
             }
         }
+        */
         //check if they're authoritative person
         aps = await AuthoritativePerson.find({})
         console.log(aps)
