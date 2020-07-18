@@ -1,6 +1,7 @@
 var router = require("express").Router()
 var Camera = require("../../db/Camera")
 var Server = require("../../db/Server")
+AskServersToCheckAlive = require("../../talker/talker").AskServersToCheckAlive
 
 //CRUD Operations
 
@@ -179,6 +180,7 @@ router.delete("/:server_id", function(req, res) {
                     }
                 }
             })
+            AskServersToCheckAlive()
             res.json({
                 succ: {
                     message: "Server successfully removed!"
