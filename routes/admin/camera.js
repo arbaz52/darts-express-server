@@ -24,6 +24,7 @@ router.get("/", function(req, res) {
 
 
 const opencage = require('opencage-api-client');
+AskServersToUpdateCameras = require("../../talker/talker").AskServersToUpdateCameras
 var AskServersToUpdatePreprocessingValues = require("../../talker/talker").AskServersToUpdatePreprocessingValues
     //searching address to geo location
 router.get("/search/:query", async(req, res) => {
@@ -180,6 +181,7 @@ router.put("/:camera_id", function(req, res) {
                 err: err
             })
         } else {
+            AskServersToUpdateCameras()
             if ((camera.serverId &&
                     camera.serverId == "") ||
                 !(camera.serverId)) {
@@ -205,6 +207,7 @@ router.delete("/:camera_id", function(req, res) {
                 err: err
             })
         } else {
+            AskServersToUpdateCameras()
             res.json({
                 succ: {
                     message: "Camera successfully removed!"

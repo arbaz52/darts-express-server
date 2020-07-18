@@ -5,6 +5,7 @@ var multer = require("multer")
 var Alert = require("./../../db/Alert")
 
 var path = require('path')
+AskServersToUpdateSuspects = require("../../talker/talker").AskServersToUpdateSuspects
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, './public/images/')
@@ -163,7 +164,7 @@ router.put("/:suspect_id", function(req, res) {
             if (!data.pictures) {
                 suspect.pictures = []
             }
-
+            AskServersToUpdateSuspects()
             res.json({
                 suspect: suspect,
                 succ: {
@@ -194,6 +195,7 @@ router.put("/:suspect_id/picture", upload.single("picture"), async function(req,
                 })
             } else {
 
+                AskServersToUpdateSuspects()
                 res.json({
                     succ: {
                         message: "Picture added succesfully!",
@@ -232,6 +234,7 @@ router.delete("/:suspect_id", function(req, res) {
             })
 
 
+            AskServersToUpdateSuspects()
             res.json({
                 succ: {
                     message: "Suspect successfully removed!"
