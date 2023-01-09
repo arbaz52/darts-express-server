@@ -15,7 +15,7 @@
         "express": "~4.16.1",
         "express-session": "^1.17.0",
         "firebase": "^7.15.2",
-        "firebase-admin": "^8.12.1",
+        "firebase-admin": "^11.4.1",
         "geolib": "^3.3.1",
         "google-auth-library": "^6.0.2",
         "http-errors": "~1.6.3",
